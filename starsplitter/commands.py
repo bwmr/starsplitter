@@ -5,19 +5,20 @@ import starfile
 
 
 @click.command()
-def starsplitter(file: Path):
+@click.argument('input_star', nargs = 1, type=click.Path(exists=True))
+def starsplitter(input_star: Path):
     """
-    Splits a given star file by rlnMicroGraphName column.
+    Splits a given star input_star by rlnMicroGraphName column.
 
-    input: .star file detailing particles from relion.
+    input: .star input_star detailing particles from relion.
 
-    output: one .star file with particles belonging to one tomogram, written to the same location as input.
+    output: one .star input_star with particles belonging to one tomogram, written to the same location as input.
     """
-    file = Path(file)
+    input_star = Path(input_star)
 
-    star = starfile.read(file)
+    star = starfile.read(input_star)
 
-    # Do a check whether the star file contains a separate optics group header
+    # Do a check whether the star input_star contains a separate optics group header
     if len(star) == 2:
         particles = star['particles']
     else:
@@ -26,11 +27,11 @@ def starsplitter(file: Path):
     particles_grouped = particles.groupby(particles['rlnMicrographName'])
 
     for tomo in particles['rlnMicrographName'].unique():
-        file_split = file.with_name(f'{file.stem}_{tomo}.star')
+        file_split = input_star.with_name(f'{input_star.stem}_{tomo}.star')
 
         particles_split = particles_grouped.get_group(tomo)
 
         if len(star) == 2:
-            starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split)
+            starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split, overwrite=True)
         else:
-            starfile.write(particles_split, file_split)
+            starfile.write(particles_split, file_split,overwrite=True)
