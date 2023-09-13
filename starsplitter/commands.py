@@ -35,3 +35,10 @@ def starsplitter(input_star: Path):
             starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split, overwrite=True)
         else:
             starfile.write(particles_split, file_split,overwrite=True)
+
+def by_tomo():
+    pass
+
+def by_session():
+    pass
+
