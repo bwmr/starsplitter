@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 @click.command()
-@click.argument('input_star', nargs = 1, type=click.Path(exists=True))
+@click.argument('input_star', nargs=1, type=click.Path(exists=True))
 def by_tomo(input_star: Path):
     """
     Splits a given star input_star by rlnMicrographName column.
@@ -36,12 +36,13 @@ def by_tomo(input_star: Path):
         if type(star) is collections.OrderedDict:
             starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split, overwrite=True)
         else:
-            starfile.write(particles_split, file_split,overwrite=True)
+            starfile.write(particles_split, file_split, overwrite=True)
 
     return
 
+
 @click.command()
-@click.argument('input_star', nargs = 1, type=click.Path(exists=True))
+@click.argument('input_star', nargs=1, type=click.Path(exists=True))
 def by_session(input_star):
     """
     Splits a given star input_star by Warp session.
@@ -68,7 +69,7 @@ def by_session(input_star):
 
     particles_grouped = particles.groupby(particles['wrpSession'])
 
-        for session in particles['wrpSession'].unique():
+    for session in particles['wrpSession'].unique():
         file_split = input_star.with_name(f'{input_star.stem}_{session}.star')
 
         particles_split = particles_grouped.get_group(session)
@@ -77,5 +78,4 @@ def by_session(input_star):
             starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split, overwrite=True)
         else:
             starfile.write(particles_split, file_split, overwrite=True)
-
     return
