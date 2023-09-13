@@ -1,10 +1,7 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu Aug 31 09:43:08 2023
+def return_session(str):
+    """
+    Warp Session generated from rlnImageName based on the following assumed path:
 
-@author: bwimmer
-"""
-
-def return_session():
-    pass
+    $warp_folder/subtomo/$tomo/$tomo_$nr_$angpix.mrc
+    """
+    return str.split("/")[-4]
