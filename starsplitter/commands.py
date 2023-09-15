@@ -29,9 +29,12 @@ def by_tomo(input_star: Path):
     particles_grouped = particles.groupby(particles['rlnMicrographName'])
 
     for tomo in particles['rlnMicrographName'].unique():
-        file_split = input_star.with_name(f'{input_star.stem}_{tomo}.star')
 
         particles_split = particles_grouped.get_group(tomo)
+        
+        prefix = utils.return_session(particles_split.iloc[0]['rlnImageName'])
+        
+        file_split = input_star.with_name(f'{input_star.stem}_{prefix}_{tomo}.star')
 
         if type(star) is collections.OrderedDict:
             starfile.write({'optics': star['optics'], 'particles': particles_split}, file_split, overwrite=True)
