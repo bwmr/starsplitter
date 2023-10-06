@@ -82,3 +82,44 @@ def by_session(input_star):
         else:
             starfile.write(particles_split, file_split, overwrite=True)
     return
+
+@click.command()
+@click.argument('input_star', nargs=1, type=click.Path(exists=True))
+def unique_tomo(input_star):
+    """
+    Make rlnMicrographName unique.
+
+    Will make it warpsession_micrographname.tomostar.
+
+    Assumes that rlnImageName contains Warp-reconstructed subtomograms with the following naming scheme:
+    $warp_folder/subtomo/$tomo/$tomo_$nr_$angpix.mrc
+
+    input: .star input_star detailing particles from relion.
+
+    output: one .star input_star with particles belonging to one session, written to the same location as input.
+    """
+
+    input_star = Path(input_star)
+
+    star = starfile.read(input_star)
+
+    # Do a check whether the star input_star contains a separate optics group header
+    if type(star) is collections.OrderedDict:
+        particles = star['particles']
+    else:
+        particles = star
+
+    particles['wrpSession'] = particles['rlnImageName'].apply(utils.return_session)
+
+    particles['rlnMicrographName'] = particles['wrpSession'] + "_" + particles['rlnMicrographName']
+
+    if type(star) is collections.OrderedDict:
+        starfile.write({'optics': star['optics'], 'particles': particles}, 
+                       input_star.with_name(f'{input_star.stem}_unique.star'),
+                       overwrite=True)
+    else:
+        starfile.write(particles, 
+                       input_star.with_name(f'{input_star.stem}_unique.star'), 
+                       overwrite=True)
+    
+    return
